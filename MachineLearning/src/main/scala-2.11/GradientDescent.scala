@@ -5,7 +5,6 @@ import breeze.linalg._
 
 object GradientDescent {
 
-
   def gradientDescent(x: DenseMatrix[Double], y: DenseVector[Double], theta: DenseVector[Double],
                       alpha: Double, numIterations: Int): DenseVector[Double] =
   {
@@ -16,11 +15,11 @@ object GradientDescent {
       val thetaCurrent = theta
       val z = x * thetaCurrent - y
 
-      theta(0) = thetaCurrent(0) - alpha * sum( z :* x(::, 0) ) / trainingSize;
-      theta(1) = thetaCurrent(1) - alpha * sum( z :* x(::, 1) ) / trainingSize;
+      theta(0) = thetaCurrent(0) - alpha * sum(z :* x(::, 0)) / trainingSize
+      theta(1) = thetaCurrent(1) - alpha * sum(z :* x(::, 1)) / trainingSize
 
       val cost = computeCost(x, y, theta)
-      println(f"$i%d : cost is $cost%f")
+      // println(f"$i%d : cost is $cost%f")
     }
 
     theta
