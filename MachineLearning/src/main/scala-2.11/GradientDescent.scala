@@ -11,9 +11,8 @@ object GradientDescent {
   {
     val trainingSize = y.length
 
-    require(theta.length == 2)
+    require(theta.length == x.cols)
     require(x.rows == y.length)
-    require(x.cols == 2)
     require(alpha > 0.0)
 
     for( i <- 0 until numIterations) {
@@ -36,9 +35,8 @@ object GradientDescent {
    */
   def computeCost(x: DenseMatrix[Double], y: DenseVector[Double], theta: DenseVector[Double]): Double = {
 
-    require(theta.length == 2)
+    require(theta.length == x.cols)
     require(x.rows == y.length)
-    require(x.cols == 2)
 
     val training_size = y.length
     sumOfSquares(x * theta - y) / (2 * training_size)
@@ -49,11 +47,10 @@ object GradientDescent {
   }
 
   def featureNormalize(x: DenseMatrix[Double]): (DenseMatrix[Double], DenseVector[Double], DenseVector[Double]) = {
-    (x, 0.0, 0.0)
 
     // need to convert from DenseMatrix for broadcasting operations
-    val xMean: DenseVector[Double] = mean(x(::, *)).t(::, 0)
-    val xStddev: DenseVector[Double] = stddev(x(::, *)).t(::, 0)
+    val xMean: DenseVector[Double] = mean(x(::, *)).toDenseVector
+    val xStddev: DenseVector[Double] = stddev(x(::, *)).toDenseVector
 
     val xDemean = x(*, ::) - xMean
     val xNorm = xDemean(*, ::) :/ xStddev

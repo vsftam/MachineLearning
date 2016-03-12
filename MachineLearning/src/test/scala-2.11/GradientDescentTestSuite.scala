@@ -2,6 +2,7 @@ import java.io.{File, FileNotFoundException}
 
 import GradientDescent._
 import breeze.linalg.{DenseMatrix, DenseVector}
+import breeze.numerics.abs
 import org.scalactic.TolerantNumerics
 import org.scalatest._
 
@@ -12,22 +13,37 @@ class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
 
   implicit val doubleEquality = TolerantNumerics.tolerantDoubleEquality(0.001)
 
-  var data: DenseMatrix[Double] = _
-  var x: DenseMatrix[Double] = _
-  var y: DenseVector[Double] = _
-  var theta: DenseVector[Double] = _
+  var data1, data2, x1, x2: DenseMatrix[Double] = _
+  var y1, y2: DenseVector[Double] = _
+
+  var theta1, theta2: DenseVector[Double] = _
 
   before {
-    data = loadResource("/ex1data1.txt")
-    assert(data.rows == 97)
-    assert(data.cols == 2)
+    data1 = loadResource("/ex1data1.txt")
+    assert(data1.rows === 97)
+    assert(data1.cols === 2)
 
-    val ones: DenseMatrix[Double] = DenseMatrix.fill(data.rows, 1){1.0}
-    val dataX: DenseMatrix[Double] = data(::,0).toDenseMatrix.t
+    data2 = loadResource("/ex1data2.txt")
+    assert(data2.rows === 47)
+    assert(data2.cols === 3)
 
-    x = DenseMatrix.horzcat( ones, dataX )
-    y = data(::,1)
-    theta = DenseVector[Double](0, 0)
+    val ones1: DenseMatrix[Double] = DenseMatrix.fill(data1.rows, 1) {
+      1.0
+    }
+    val dataX1: DenseMatrix[Double] = data1(::, 0).toDenseMatrix.t
+
+    x1 = DenseMatrix.horzcat(ones1, dataX1)
+    y1 = data1(::, 1)
+
+    val ones2: DenseMatrix[Double] = DenseMatrix.fill(data2.rows, 1) {
+      1.0
+    }
+    val dataX2: DenseMatrix[Double] = data2(::, 0 to 1)
+    x2 = DenseMatrix.horzcat(ones2, dataX2)
+    y2 = data2(::, 2)
+
+    theta1 = DenseVector[Double](0, 0)
+    theta2 = DenseVector[Double](0, 0, 0)
   }
 
   test("computeCost should return correct value") {
@@ -47,20 +63,23 @@ class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
   }
 
   test("computeCost against data set") {
-    val cost = computeCost(x, y, theta)
+    val cost = computeCost(x1, y1, theta1)
     assert(cost === 32.073)
+
+    val cost2 = computeCost(x2, y2, theta2)
+    assert(abs(cost2 - 65591548106.0) < 1.0)
   }
 
   test("gradientDescent against data set") {
     val iteration = 1500
     val alpha = 0.01
-    val finalTheta = gradientDescent(x, y, theta, alpha, iteration)
+    val finalTheta = gradientDescent(x1, y1, theta1, alpha, iteration)
     assert(finalTheta(0) === -3.630291)
     assert(finalTheta(1) === 1.166362)
   }
 
   test("featureNormalize against data set") {
-    val res = featureNormalize(data)
+    val res = featureNormalize(data1)
     assert(res._2(0) === 8.1598)
     assert(res._2(1) === 5.8391)
 
