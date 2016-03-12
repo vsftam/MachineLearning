@@ -10,6 +10,7 @@ object GradientDescent {
                       alpha: Double, numIterations: Int): DenseVector[Double] =
   {
     val trainingSize = y.length
+    val featureSize = x.cols
 
     require(theta.length == x.cols)
     require(x.rows == y.length)
@@ -20,8 +21,9 @@ object GradientDescent {
       val thetaCurrent = theta
       val z = x * thetaCurrent - y
 
-      theta(0) = thetaCurrent(0) - alpha * sum(z :* x(::, 0)) / trainingSize
-      theta(1) = thetaCurrent(1) - alpha * sum(z :* x(::, 1)) / trainingSize
+      for (j <- 0 until featureSize) {
+        theta(j) = thetaCurrent(j) - alpha * sum(z :* x(::, j)) / trainingSize
+      }
 
       val cost = computeCost(x, y, theta)
       // println(f"$i%d : cost is $cost%f")

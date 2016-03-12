@@ -39,7 +39,8 @@ class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
       1.0
     }
     val dataX2: DenseMatrix[Double] = data2(::, 0 to 1)
-    x2 = DenseMatrix.horzcat(ones2, dataX2)
+    val res = featureNormalize(dataX2)
+    x2 = DenseMatrix.horzcat(ones2, res._1)
     y2 = data2(::, 2)
 
     theta1 = DenseVector[Double](0, 0)
@@ -71,11 +72,19 @@ class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
   }
 
   test("gradientDescent against data set") {
-    val iteration = 1500
-    val alpha = 0.01
-    val finalTheta = gradientDescent(x1, y1, theta1, alpha, iteration)
+    var iteration = 1500
+    var alpha = 0.01
+    var finalTheta = gradientDescent(x1, y1, theta1, alpha, iteration)
     assert(finalTheta(0) === -3.630291)
     assert(finalTheta(1) === 1.166362)
+
+    iteration = 400
+    alpha = 0.03
+    finalTheta = gradientDescent(x2, y2, theta2, alpha, iteration)
+
+    assert(finalTheta(0) === 340410.918973)
+    assert(finalTheta(1) === 110308.113371)
+    assert(finalTheta(2) === -6326.538108)
   }
 
   test("featureNormalize against data set") {
@@ -85,6 +94,15 @@ class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
 
     assert(res._3(0) === 3.86988)
     assert(res._3(1) === 5.51026)
+
+    val res2 = featureNormalize(data2)
+    assert(res2._2(0) === 2000.680851)
+    assert(res2._2(1) === 3.170212766)
+    assert(res2._2(2) === 340412.6596)
+
+    assert(res2._3(0) === 794.7023535)
+    assert(res2._3(1) === 0.760981887)
+    assert(res2._3(2) === 125039.8996)
   }
 
   def loadResource(filename: String): DenseMatrix[Double] = {
