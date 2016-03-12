@@ -2,6 +2,7 @@
   * Created by Vincent on 2/1/16.
   */
 import breeze.linalg._
+import breeze.stats._
 
 object GradientDescent {
 
@@ -9,6 +10,11 @@ object GradientDescent {
                       alpha: Double, numIterations: Int): DenseVector[Double] =
   {
     val trainingSize = y.length
+
+    require(theta.length == 2)
+    require(x.rows == y.length)
+    require(x.cols == 2)
+    require(alpha > 0.0)
 
     for( i <- 0 until numIterations) {
 
@@ -40,6 +46,19 @@ object GradientDescent {
 
   def sumOfSquares(x: DenseVector[Double]): Double = {
     sum( x.map( i => Math.pow(i, 2.0)) )
+  }
+
+  def featureNormalize(x: DenseMatrix[Double]): (DenseMatrix[Double], DenseVector[Double], DenseVector[Double]) = {
+    (x, 0.0, 0.0)
+
+    // need to convert from DenseMatrix for broadcasting operations
+    val xMean: DenseVector[Double] = mean(x(::, *)).t(::, 0)
+    val xStddev: DenseVector[Double] = stddev(x(::, *)).t(::, 0)
+
+    val xDemean = x(*, ::) - xMean
+    val xNorm = xDemean(*, ::) :/ xStddev
+
+    (xNorm, xMean, xStddev)
   }
 
   def main(args: Array[String]): Unit =

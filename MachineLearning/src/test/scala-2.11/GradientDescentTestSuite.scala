@@ -1,10 +1,9 @@
-import java.io.{FileNotFoundException, File}
-
-import breeze.linalg.{Matrix, DenseVector, DenseMatrix}
-import org.scalactic.{TolerantNumerics, Tolerance}
-import org.scalatest._
+import java.io.{File, FileNotFoundException}
 
 import GradientDescent._
+import breeze.linalg.{DenseMatrix, DenseVector}
+import org.scalactic.TolerantNumerics
+import org.scalatest._
 
 /**
   * Created by Vincent on 2/20/16.
@@ -13,12 +12,13 @@ class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
 
   implicit val doubleEquality = TolerantNumerics.tolerantDoubleEquality(0.001)
 
+  var data: DenseMatrix[Double] = _
   var x: DenseMatrix[Double] = _
   var y: DenseVector[Double] = _
   var theta: DenseVector[Double] = _
 
   before {
-    val data: DenseMatrix[Double] = loadResource("/ex1data1.txt")
+    data = loadResource("/ex1data1.txt")
     assert(data.rows == 97)
     assert(data.cols == 2)
 
@@ -59,6 +59,15 @@ class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
     assert(finalTheta(1) === 1.166362)
   }
 
+  test("featureNormalize against data set") {
+    val res = featureNormalize(data)
+    assert(res._2(0) === 8.1598)
+    assert(res._2(1) === 5.8391)
+
+    assert(res._3(0) === 3.86988)
+    assert(res._3(1) === 5.51026)
+  }
+
   def loadResource(filename: String): DenseMatrix[Double] = {
     val source = getClass.getResource(filename).getFile
 
@@ -66,6 +75,6 @@ class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
     if( !testFile.exists() ) {
       throw new FileNotFoundException(s"Cannot locate file $testFile")
     }
-    return breeze.linalg.csvread(testFile)
+    breeze.linalg.csvread(testFile)
   }
 }
