@@ -68,7 +68,7 @@ class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
     assert(cost === 32.073)
 
     val cost2 = computeCost(x2, y2, theta2)
-    assert(abs(cost2 - 65591548106.0) < 1.0)
+    assert(diffWithinPercentage(cost2, 65591548106.0, 0.01))
   }
 
   test("gradientDescent against data set") {
@@ -85,6 +85,12 @@ class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
     assert(finalTheta(0) === 340410.918973)
     assert(finalTheta(1) === 110308.113371)
     assert(finalTheta(2) === -6326.538108)
+
+    val thetaCloseForm = normalEquation(x2, y2)
+
+    assert(diffWithinPercentage(finalTheta(0), thetaCloseForm(0), 1))
+    assert(diffWithinPercentage(finalTheta(1), thetaCloseForm(1), 1))
+    assert(diffWithinPercentage(finalTheta(2), thetaCloseForm(2), 1))
   }
 
   test("featureNormalize against data set") {
@@ -103,6 +109,10 @@ class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
     assert(res2._3(0) === 794.7023535)
     assert(res2._3(1) === 0.760981887)
     assert(res2._3(2) === 125039.8996)
+  }
+
+  def diffWithinPercentage(a: Double, b: Double, p: Double): Boolean = {
+    abs(a - b) / a < p / 100
   }
 
   def loadResource(filename: String): DenseMatrix[Double] = {

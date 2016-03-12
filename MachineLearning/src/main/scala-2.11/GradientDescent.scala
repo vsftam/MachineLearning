@@ -60,6 +60,10 @@ object GradientDescent {
     (xNorm, xMean, xStddev)
   }
 
+  def normalEquation(x: DenseMatrix[Double], y: DenseVector[Double]): DenseVector[Double] = {
+    pinv(x.t * x) * x.t * y
+  }
+
   def main(args: Array[String]): Unit =
   {
 
