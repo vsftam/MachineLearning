@@ -1,15 +1,16 @@
-import java.io.{File, FileNotFoundException}
+package vsftam
 
-import GradientDescent._
 import breeze.linalg.{DenseMatrix, DenseVector}
-import breeze.numerics.abs
 import org.scalactic.TolerantNumerics
 import org.scalatest._
+import vsftam.LinearRegression._
+import vsftam.MathUtils._
+import vsftam.TestUtils._
 
 /**
   * Created by Vincent on 2/20/16.
   */
-class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
+class LinearRegressionTestSuite extends FunSuite with BeforeAndAfter {
 
   implicit val doubleEquality = TolerantNumerics.tolerantDoubleEquality(0.001)
 
@@ -27,24 +28,20 @@ class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
     assert(data2.rows === 47)
     assert(data2.cols === 3)
 
-    val ones1: DenseMatrix[Double] = DenseMatrix.fill(data1.rows, 1) {
-      1.0
-    }
+    val ones1: DenseMatrix[Double] = DenseMatrix.ones(data1.rows, 1)
     val dataX1: DenseMatrix[Double] = data1(::, 0).toDenseMatrix.t
 
     x1 = DenseMatrix.horzcat(ones1, dataX1)
     y1 = data1(::, 1)
 
-    val ones2: DenseMatrix[Double] = DenseMatrix.fill(data2.rows, 1) {
-      1.0
-    }
+    val ones2: DenseMatrix[Double] = DenseMatrix.ones(data2.rows, 1)
     val dataX2: DenseMatrix[Double] = data2(::, 0 to 1)
     val res = featureNormalize(dataX2)
     x2 = DenseMatrix.horzcat(ones2, res._1)
     y2 = data2(::, 2)
 
-    theta1 = DenseVector[Double](0, 0)
-    theta2 = DenseVector[Double](0, 0, 0)
+    theta1 = DenseVector.zeros(x1.cols)
+    theta2 = DenseVector.zeros(x2.cols)
   }
 
   test("computeCost should return correct value") {
@@ -111,17 +108,5 @@ class GradientDescentTestSuite extends FunSuite with BeforeAndAfter {
     assert(res2._3(2) === 125039.8996)
   }
 
-  def diffWithinPercentage(a: Double, b: Double, p: Double): Boolean = {
-    abs(a - b) / a < p / 100
-  }
 
-  def loadResource(filename: String): DenseMatrix[Double] = {
-    val source = getClass.getResource(filename).getFile
-
-    val testFile: File = new File(source)
-    if( !testFile.exists() ) {
-      throw new FileNotFoundException(s"Cannot locate file $testFile")
-    }
-    breeze.linalg.csvread(testFile)
-  }
 }
