@@ -29,7 +29,7 @@ class LogisticRegressionTestSuite extends FunSuite with BeforeAndAfter {
 
   test("sigmoid function returns 0.5 for 0 vectors") {
     val v = DenseVector(0.0, 0.0, 0.0, 0.0)
-    assert(sum(sigmoid(v)) === 0.5 * 4)
+    assert(sum(sigmoid(v)) === 0.5 * v.length)
 
   }
 

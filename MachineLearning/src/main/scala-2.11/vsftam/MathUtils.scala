@@ -13,6 +13,11 @@ object MathUtils {
     sum(x.map(i => Math.pow(i, 2.0)))
   }
 
+  /**
+    *
+    * @param x matrix to be normalized
+    * @return tuple of (normalized matrix, mean as column vector, standard deviration as column vector)
+    */
   def featureNormalize(x: DenseMatrix[Double]): (DenseMatrix[Double], DenseVector[Double], DenseVector[Double]) = {
 
     // need to convert from DenseMatrix for broadcasting operations
@@ -32,4 +37,21 @@ object MathUtils {
   def sigmoid(z: DenseVector[Double]): DenseVector[Double] = {
     pow(exp(-1.0 * z) + 1.0, -1)
   }
+
+  def mapFeature(x1: DenseVector[Double], x2: DenseVector[Double], degree: Int): DenseMatrix[Double] = {
+    val cols: Int = (degree + 3) * degree / 2 + 1
+    val out = DenseMatrix.zeros[Double](x1.length, cols)
+
+    out(::, 0) := 1.0
+    var c = 1
+    for (
+      i <- 1 to degree;
+      j <- 0 to i
+    ) {
+      out(::, c) := pow(x1, i - j) :* pow(x2, j)
+      c = c + 1
+    }
+    out
+  }
+
 }
