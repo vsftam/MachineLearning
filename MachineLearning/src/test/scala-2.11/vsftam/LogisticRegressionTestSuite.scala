@@ -11,20 +11,17 @@ import vsftam.TestUtils._
   */
 class LogisticRegressionTestSuite extends FunSuite with BeforeAndAfter {
 
-  var data, x: DenseMatrix[Double] = _
+  var data1, data2, x: DenseMatrix[Double] = _
   var theta, y: DenseVector[Double] = _
 
   before {
-    data = loadResource("/ex2data1.txt")
+    data1 = loadResource("/ex2data1.txt")
+    data2 = loadResource("/ex2data2.txt")
 
-    assert(data.rows === 100)
-    assert(data.cols === 3)
+    assert(data1.rows === 100)
+    assert(data1.cols === 3)
 
-    val ones: DenseMatrix[Double] = DenseMatrix.ones(data.rows, 1)
-    x = DenseMatrix.horzcat(ones, data(::, 0 to 1))
-    y = data(::, 2)
 
-    theta = DenseVector.zeros(x.cols)
   }
 
   test("sigmoid function returns 0.5 for 0 vectors") {
@@ -33,11 +30,27 @@ class LogisticRegressionTestSuite extends FunSuite with BeforeAndAfter {
 
   }
 
-  test("costFunction should return correct values") {
+  test("costFunction without regularization should return correct values") {
+
+    val ones: DenseMatrix[Double] = DenseMatrix.ones(data1.rows, 1)
+    x = DenseMatrix.horzcat(ones, data1(::, 0 to 1))
+    y = data1(::, 2)
+    theta = DenseVector.zeros(x.cols)
+
     val res = costFunction(x, y, theta)
     assert(diffWithinPercentage(res._1, 0.693147, 0.1))
     assert(diffWithinPercentage(res._2(0), -0.100000, 0.1))
     assert(diffWithinPercentage(res._2(1), -12.009217, 0.1))
     assert(diffWithinPercentage(res._2(2), -11.262842, 0.1))
+  }
+
+  test("costFunction with regularization should return correct values") {
+
+    x = mapFeature(data2(::, 0), data2(::, 1), 6)
+    y = data2(::, 2)
+    theta = DenseVector.zeros(x.cols)
+    val lambda = 1
+    val res = costFunction(x, y, theta, lambda)
+    assert(diffWithinPercentage(res._1, 0.693, 0.1))
   }
 }

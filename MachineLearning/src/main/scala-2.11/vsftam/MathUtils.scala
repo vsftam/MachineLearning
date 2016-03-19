@@ -10,7 +10,7 @@ import breeze.stats._
 object MathUtils {
 
   def sumOfSquares(x: DenseVector[Double]): Double = {
-    sum(x.map(i => Math.pow(i, 2.0)))
+    sum(pow(x, 2))
   }
 
   /**
