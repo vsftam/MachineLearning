@@ -20,8 +20,6 @@ class LogisticRegressionTestSuite extends FunSuite with BeforeAndAfter {
 
     assert(data1.rows === 100)
     assert(data1.cols === 3)
-
-
   }
 
   test("sigmoid function returns 0.5 for 0 vectors") {
@@ -37,7 +35,7 @@ class LogisticRegressionTestSuite extends FunSuite with BeforeAndAfter {
     y = data1(::, 2)
     theta = DenseVector.zeros(x.cols)
 
-    val res = costFunction(x, y, theta)
+    val res = computeCost(x, y, theta)
     assert(diffWithinPercentage(res._1, 0.693147, 0.1))
     assert(diffWithinPercentage(res._2(0), -0.100000, 0.1))
     assert(diffWithinPercentage(res._2(1), -12.009217, 0.1))
@@ -50,7 +48,17 @@ class LogisticRegressionTestSuite extends FunSuite with BeforeAndAfter {
     y = data2(::, 2)
     theta = DenseVector.zeros(x.cols)
     val lambda = 1
-    val res = costFunction(x, y, theta, lambda)
+    val res = computeCost(x, y, theta, lambda)
     assert(diffWithinPercentage(res._1, 0.693, 0.1))
+  }
+
+  test("gradient descent against data set") {
+    val alpha = 0.0014
+    val iteration = 2000000 // much slower to converge
+
+    // var finalTheta = gradientDescent(x, y, theta, alpha, iteration)
+    // assert(finalTheta(0) === -25.161272)
+    // assert(finalTheta(1) === 0.206233)
+    // assert(finalTheta(2) === 0.201470)
   }
 }

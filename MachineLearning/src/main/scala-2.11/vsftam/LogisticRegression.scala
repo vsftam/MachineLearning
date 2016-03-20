@@ -10,10 +10,35 @@ import vsftam.MathUtils._
 
 object LogisticRegression {
 
+  def gradientDescent(x: DenseMatrix[Double], y: DenseVector[Double], theta: DenseVector[Double],
+                      alpha: Double, numIterations: Int): DenseVector[Double] = {
+    val trainingSize = y.length
+    val featureSize = x.cols
+
+    require(theta.length == x.cols)
+    require(x.rows == y.length)
+    require(alpha > 0.0)
+
+    for (i <- 0 until numIterations) {
+
+      val thetaCurrent = theta
+      val z = sigmoid(x * thetaCurrent) - y
+
+      for (j <- 0 until featureSize) {
+        theta(j) = thetaCurrent(j) - alpha * sum(z :* x(::, j)) / trainingSize
+      }
+
+      val ret = computeCost(x, y, theta)
+      // println(f"$i%d : cost is $cost%f")
+    }
+
+    theta
+  }
+
   /*
    * returns (Cost, Gradient)
    */
-  def costFunction(x: DenseMatrix[Double], y: DenseVector[Double], theta: DenseVector[Double], lambda: Double = 0.0):
+  def computeCost(x: DenseMatrix[Double], y: DenseVector[Double], theta: DenseVector[Double], lambda: Double = 0.0):
   (Double, DenseVector[Double]) = {
     require(x.rows == y.length)
     require(x.cols == theta.length)
