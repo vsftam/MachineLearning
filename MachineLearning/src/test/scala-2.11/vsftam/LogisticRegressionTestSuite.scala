@@ -22,11 +22,20 @@ class LogisticRegressionTestSuite extends FunSuite with BeforeAndAfter {
     assert(data1.cols === 3)
   }
 
-  test("sigmoid function returns 0.5 for 0 vectors") {
+  test("sigmoid and sigmoid gradient function returns correct values") {
     val v = DenseVector(0.0, 0.0, 0.0, 0.0)
     assert(sum(sigmoid(v)) === 0.5 * v.length)
+    assert(sum(sigmoidGradient(v)) === 0.25 * v.length)
 
+    val v1 = DenseVector(-1000.0, -1000.0, -1000.0)
+    assert(sum(sigmoid(v1)) === 0.0)
+    assert(sum(sigmoidGradient(v1)) === 0.0)
+
+    val v2 = DenseVector(1000.0, 1000.0, 1000.0)
+    assert(sum(sigmoid(v2)) === 1.0 * v2.length)
+    assert(sum(sigmoidGradient(v2)) === 0.0)
   }
+
 
   test("costFunction without regularization should return correct values") {
 

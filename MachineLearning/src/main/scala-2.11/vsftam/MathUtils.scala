@@ -38,6 +38,10 @@ object MathUtils {
     pow(exp(-1.0 * z) + 1.0, -1)
   }
 
+  def sigmoidGradient(z: DenseVector[Double]): DenseVector[Double] = {
+    sigmoid(z) :* (1.0 - sigmoid(z))
+  }
+
   def mapFeature(x1: DenseVector[Double], x2: DenseVector[Double], degree: Int): DenseMatrix[Double] = {
     val cols: Int = (degree + 3) * degree / 2 + 1
     val out = DenseMatrix.zeros[Double](x1.length, cols)
