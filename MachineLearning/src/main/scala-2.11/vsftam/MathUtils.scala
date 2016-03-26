@@ -58,4 +58,15 @@ object MathUtils {
     out
   }
 
+  def filterByIndex(x: DenseMatrix[Double], y: DenseVector[Double]): DenseMatrix[Double] = {
+    require(x.rows == y.length)
+
+    var result = DenseMatrix.zeros[Double](0, x.cols)
+    for (i <- 0 until x.rows) {
+      if (y(i) == 1.0) {
+        result = DenseMatrix.vertcat(result, x(i, ::).inner.asDenseMatrix)
+      }
+    }
+    result
+  }
 }
