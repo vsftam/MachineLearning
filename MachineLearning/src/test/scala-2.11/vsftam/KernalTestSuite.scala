@@ -30,7 +30,7 @@ class KernalTestSuite extends FunSuite with BeforeAndAfter {
 
   test("test filter by index") {
     val x = DenseMatrix((1.0, 2.0), (3.0, 4.0), (5.0, 6.0))
-    val y = DenseVector(1.0, 0.0, 1.0)
+    val y = DenseVector(1, 0, 1)
     val f = filterByIndex(x, y)
     assert(f.rows === 2)
     assert(sum(f(0, ::)) === 3.0)

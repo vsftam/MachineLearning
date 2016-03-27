@@ -108,7 +108,7 @@ object SupportVectorMachine {
         passes = 0
     }
 
-    val idx = alphas.map(i => if (i > 0.0) 1.0 else -1.0)
+    val idx = alphas.map(i => if (i > 0.0) 1 else -1)
     val retX = filterByIndex(x, idx)
     val retY = filterByIndex(y2.toDenseMatrix.t, idx)
     val retKf = kf
