@@ -52,4 +52,22 @@ object KmeansClustering {
     }
     centroids
   }
+
+  def runKmeans(x: DenseMatrix[Double], centroids: DenseMatrix[Double], maxIter: Int = 10): (DenseMatrix[Double], DenseVector[Int]) = {
+
+    require(x.cols == 2)
+    require(centroids.cols == 2)
+
+    val k = centroids.rows
+    var indexes = DenseVector.zeros[Int](x.rows)
+    var c = centroids
+
+    for (i <- 1 to maxIter) {
+      indexes = findClosestCentroids(x, c)
+
+      c = computeCentroids(x, indexes, k)
+    }
+
+    (c, indexes)
+  }
 }
