@@ -1,6 +1,7 @@
 package vsftam
 
 import breeze.linalg.{*, DenseMatrix, DenseVector, norm}
+import breeze.numerics.floor
 import breeze.stats.mean
 import vsftam.MathUtils._
 
@@ -69,5 +70,19 @@ object KmeansClustering {
     }
 
     (c, indexes)
+  }
+
+  def kmeansInitCentroids(x: DenseMatrix[Double], k: Int): DenseMatrix[Double] = {
+    require(x.cols == 2)
+    require(x.rows > k)
+
+    var centroids = DenseMatrix.zeros[Double](0, x.cols)
+    val rand = scala.util.Random
+
+    for (i <- 1 to k) {
+      val index = floor(x.rows * rand.nextFloat()).toInt
+      DenseMatrix.vertcat(centroids, x(index, ::).inner.asDenseMatrix)
+    }
+    centroids
   }
 }
