@@ -81,7 +81,7 @@ object KmeansClustering {
 
     for (i <- 1 to k) {
       val index = floor(x.rows * rand.nextFloat()).toInt
-      DenseMatrix.vertcat(centroids, x(index, ::).inner.asDenseMatrix)
+      centroids = DenseMatrix.vertcat(centroids, x(index, ::).inner.asDenseMatrix)
     }
     centroids
   }
