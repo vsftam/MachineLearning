@@ -69,4 +69,12 @@ object MathUtils {
     }
     result
   }
+
+  // Returns an M-by-M matrix U (SVD.U), a vector of singular values (SVD.S), and a N-by-N matrix V'
+  //
+  def pca(x: DenseMatrix[Double]): svd.SVD[DenseMatrix[Double], DenseVector[Double]] = {
+
+    val a = x.t * x :/ x.rows.toDouble
+    svd(a)
+  }
 }
