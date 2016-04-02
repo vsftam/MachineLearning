@@ -1,9 +1,8 @@
 package vsftam
 
-import breeze.linalg.{DenseMatrix, DenseVector, sum, svd}
+import breeze.linalg.{DenseMatrix, sum}
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import vsftam.KmeansClustering._
-import vsftam.MathUtils._
 import vsftam.TestUtils._
 
 /**
@@ -11,12 +10,9 @@ import vsftam.TestUtils._
   */
 class KmeanClusteringTestSuite extends FunSuite with BeforeAndAfter {
 
-  var data1: DenseMatrix[Double] = _
   var data2: DenseMatrix[Double] = _
 
-
   before {
-    data1 = loadResource("/ex7data1.txt")
     data2 = loadResource("/ex7data2.txt")
   }
 
@@ -49,12 +45,5 @@ class KmeanClusteringTestSuite extends FunSuite with BeforeAndAfter {
     assert(diffWithinPercentage(res._1(2, 0), 6.0337, 0.01))
     assert(diffWithinPercentage(res._1(2, 1), 3.0005, 0.01))
     assert(sum(res._2) === 602)
-  }
-
-  test("pca should return the correct value") {
-    val res = featureNormalize(data1)
-    val s: svd.SVD[DenseMatrix[Double], DenseVector[Double]] = pca(res._1)
-    assert(diffWithinPercentage(Math.abs(s.U(0, 0)), 0.707107, 0.01))
-    assert(diffWithinPercentage(Math.abs(s.U(1, 0)), 0.707107, 0.01))
   }
 }
