@@ -20,10 +20,8 @@ object MathUtils {
     */
   def featureNormalize(x: DenseMatrix[Double]): (DenseMatrix[Double], DenseVector[Double], DenseVector[Double]) = {
 
-    // need to convert from DenseMatrix for broadcasting operations
-    val gaussian = estimateGaussian(x)
-    val xMean = gaussian._1
-    val xStddev = gaussian._2
+    val xMean = matrixMean(x)
+    val xStddev = matrixStddev(x)
 
     val xDemean = x(*, ::) - xMean
     val xNorm = xDemean(*, ::) :/ xStddev
@@ -71,11 +69,27 @@ object MathUtils {
     result
   }
 
-  def estimateGaussian(x: DenseMatrix[Double]): (DenseVector[Double], DenseVector[Double]) = {
-    val xMean = mean(x(::, *)).toDenseVector
-    val xStddev = stddev(x(::, *)).toDenseVector
+  def matrixMean(x: DenseMatrix[Double]): DenseVector[Double] = mean(x(::, *)).toDenseVector
 
-    (xMean, xStddev)
+  def matrixStddev(x: DenseMatrix[Double]): DenseVector[Double] = stddev(x(::, *)).toDenseVector
+
+  // var function use 1/(m-1), here we use 1/m
+  def matrixVariance(x: DenseMatrix[Double]): DenseVector[Double] = {
+    val xMeanSq: DenseMatrix[Double] = pow(x(*, ::) - matrixMean(x), 2)
+    (sum(xMeanSq(::, *)) / x.rows.toDouble).toDenseVector
+  }
+
+  def multivariateGaussian(x: DenseMatrix[Double], mu: DenseVector[Double], sigma: DenseVector[Double]): DenseVector[Double] = {
+    require(x.cols == mu.length)
+    require(x.cols == sigma.length)
+
+    val k = mu.length
+    val diagSigma = diag(sigma)
+    val xDm = x(*, ::) - mu
+
+    val w = (xDm * pinv(diagSigma)) :* xDm
+    val res = pow(2 * Math.PI, -k / 2) * pow(det(diagSigma), -0.5) * exp(-0.5 * sum(w(*, ::)))
+    res.toDenseVector
   }
 
   def sumBitVector(b: BitVector): Int = {

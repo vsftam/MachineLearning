@@ -9,6 +9,8 @@ import vsftam.MathUtils._
 object AnomalyDetection {
 
   def selectThreshold(yVal: DenseVector[Double], pVal: DenseVector[Double]): (Double, Double) = {
+    require(yVal.length == pVal.length)
+
     val stepSize = (max(pVal) - min(pVal)) / 1000.0
     var bestFIscore = 0.0
     var bestEpsilon = 0.0
