@@ -21,8 +21,9 @@ object MathUtils {
   def featureNormalize(x: DenseMatrix[Double]): (DenseMatrix[Double], DenseVector[Double], DenseVector[Double]) = {
 
     // need to convert from DenseMatrix for broadcasting operations
-    val xMean: DenseVector[Double] = mean(x(::, *)).toDenseVector
-    val xStddev: DenseVector[Double] = stddev(x(::, *)).toDenseVector
+    val gaussian = estimateGaussian(x)
+    val xMean = gaussian._1
+    val xStddev = gaussian._2
 
     val xDemean = x(*, ::) - xMean
     val xNorm = xDemean(*, ::) :/ xStddev
@@ -70,4 +71,14 @@ object MathUtils {
     result
   }
 
+  def estimateGaussian(x: DenseMatrix[Double]): (DenseVector[Double], DenseVector[Double]) = {
+    val xMean = mean(x(::, *)).toDenseVector
+    val xStddev = stddev(x(::, *)).toDenseVector
+
+    (xMean, xStddev)
+  }
+
+  def sumBitVector(b: BitVector): Int = {
+    sum(b.map(p => if (p) 1 else 0))
+  }
 }
