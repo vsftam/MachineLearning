@@ -34,7 +34,5 @@ class GarageSpot[T <: GarageVehicle](id: SpotId) {
         false
     }
   }
-
-  def canPark(v: GarageVehicle): Boolean = v.getClass == vehicle.getClass
 }
 
