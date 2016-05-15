@@ -26,22 +26,23 @@ sealed trait GarageVehicle {
   def getHourlyRate: Double
 
   def getFee: Double = (enterDateTime, leaveDateTime) match {
-    case (Some(e), Some(l)) => ChronoUnit.HOURS.between(e, l) * getHourlyRate
+    case (Some(e), Some(l)) => ChronoUnit.MINUTES.between(e, l) * getHourlyRate / 60.0
     case _ => 0.0
   }
 
   val getLicenseNo: String
 }
 
-
 case class Truck(licenseNo: String) extends GarageVehicle {
   def getHourlyRate: Double = GarageVehicle.Trunk.hourlyRate
 
   val getLicenseNo: String = licenseNo
+  override val toString = "Truck (" + getLicenseNo + ")"
 }
 
 case class Car(licenseNo: String) extends GarageVehicle {
   def getHourlyRate: Double = GarageVehicle.Car.hourlyRate
 
   val getLicenseNo: String = licenseNo
+  override val toString = "Car (" + getLicenseNo + ")"
 }

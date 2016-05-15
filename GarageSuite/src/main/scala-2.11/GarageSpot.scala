@@ -20,10 +20,10 @@ class GarageSpot[T <: GarageVehicle](id: SpotId) {
 
       case Some(v) => (v.enterDateTime, v.leaveDateTime) match {
         case (Some(_), Some(d)) =>
-          println("spot " + spotId + " occupied by " + v.getLicenseNo)
+          println("spot " + spotId + " occupied by " + v)
           d.isAfter(LocalDateTime.now)
         case (None, None) =>
-          println("spot " + spotId + " not occupied by " + v.getLicenseNo)
+          println("spot " + spotId + " not occupied by " + v)
           false
         case _ =>
           println("spot " + spotId + " occupied")

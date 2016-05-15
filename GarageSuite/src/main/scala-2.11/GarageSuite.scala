@@ -13,9 +13,11 @@ class Garage(carGarageSpots: Array[GarageSpot[Car]], truckGarageSpots: Array[Gar
           vehicle.enterDateTime = Some(parkTime.getOrElse(LocalDateTime.now))
           vehicle.spot = Some(s.spotId)
           s.vehicle = Some(vehicle)
-          println("Park car " + vehicle.getLicenseNo + " at spot " + s.spotId)
+          println("Park " + vehicle + " at spot " + s.spotId)
           true
-        case None => false
+        case None =>
+          println("Garage is full, cannot park " + vehicle)
+          false
       }
     }
 
@@ -37,7 +39,7 @@ class Garage(carGarageSpots: Array[GarageSpot[Car]], truckGarageSpots: Array[Gar
           vehicle.leaveDateTime = Some(unparkTime.getOrElse(LocalDateTime.now))
           vehicle.spot = None
           s.vehicle = None
-          println("Unpark vehicle " + vehicle.getLicenseNo + " from spot " + s.spotId + " with fee " + vehicle.getFee)
+          println("Unpark " + vehicle + " from spot " + s.spotId + " with fee " + vehicle.getFee)
           true
         case None => false
       }
@@ -74,19 +76,28 @@ object GarageSuite extends App {
 
   val now = LocalDateTime.now
 
-  val car1 = new Car("C123")
-  val c = myGarage.park(car1, Some(now))
-  if (!c) println("cannot park " + car1)
-  val truck1 = new Truck("T234")
-  val t = myGarage.park(truck1, Some(now))
+  val car1 = Car("C123")
+  var c = myGarage.park(car1, Some(now))
+
+  val truck1 = Truck("T234")
+  var t = myGarage.park(truck1, Some(now))
+
+  val halfHourLater = now.plusMinutes(30)
+  val car2 = Car("C278")
+  c = myGarage.park(car2, Some(halfHourLater))
+
+  val hourHalfLater = now.plusMinutes(90)
+  var car3 = Car("C345")
+  c = myGarage.park(car3, Some(hourHalfLater))
+
+  var car4 = Car("C498")
+  c = myGarage.park(car4, Some(hourHalfLater))
 
   val twoHrsLater = now.plusHours(2)
 
-  if (!t)
-    println("cannot park" + truck1)
-  else
-    myGarage.unpark(truck1, Some(twoHrsLater))
+  myGarage.unpark(truck1, Some(twoHrsLater))
+  myGarage.unpark(car1, Some(twoHrsLater))
+  myGarage.unpark(car2, Some(twoHrsLater))
 
-  if (c)
-    myGarage.unpark(car1, Some(twoHrsLater))
+  myGarage.park(car4, Some(twoHrsLater))
 }
