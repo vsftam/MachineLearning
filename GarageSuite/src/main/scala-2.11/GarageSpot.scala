@@ -9,28 +9,26 @@ object GarageSpot {
   type SpotId = Int
 }
 
-class GarageSpot[T <: GarageVehicle](id: SpotId) {
+class GarageSpot[T <: GarageVehicle](val id: SpotId) {
 
   var vehicle: Option[T] = None
-
-  def spotId = id
 
   def isOccupied: Boolean = {
     vehicle match {
 
       case Some(v) => (v.enterDateTime, v.leaveDateTime) match {
         case (Some(_), Some(d)) =>
-          println("spot " + spotId + " occupied by " + v)
+          println("spot " + id + " occupied by " + v)
           d.isAfter(LocalDateTime.now)
         case (None, None) =>
-          println("spot " + spotId + " not occupied by " + v)
+          println("spot " + id + " not occupied by " + v)
           false
         case _ =>
-          println("spot " + spotId + " occupied")
+          println("spot " + id + " occupied")
           true
       }
       case None =>
-        println("spot " + spotId + " not occupied")
+        println("spot " + id + " not occupied")
         false
     }
   }

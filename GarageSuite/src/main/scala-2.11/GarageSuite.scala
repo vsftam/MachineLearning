@@ -5,15 +5,17 @@ import java.time.LocalDateTime
   */
 
 class Garage(carGarageSpots: Array[GarageSpot[Car]], truckGarageSpots: Array[GarageSpot[Truck]]) {
+  var feesReceived: Double = 0.0
+
   def park[V <: GarageVehicle](vehicle: V, parkTime: Option[LocalDateTime]): Boolean = {
 
     def parkHelper[V <: GarageVehicle](vehicle: V, garageSpot: Option[GarageSpot[V]]): Boolean = {
       garageSpot match {
         case Some(s) =>
           vehicle.enterDateTime = Some(parkTime.getOrElse(LocalDateTime.now))
-          vehicle.spot = Some(s.spotId)
+          vehicle.spot = Some(s.id)
           s.vehicle = Some(vehicle)
-          println("Park " + vehicle + " at spot " + s.spotId)
+          println("Park " + vehicle + " at spot " + s.id)
           true
         case None =>
           println("Garage is full, cannot park " + vehicle)
@@ -39,7 +41,8 @@ class Garage(carGarageSpots: Array[GarageSpot[Car]], truckGarageSpots: Array[Gar
           vehicle.leaveDateTime = Some(unparkTime.getOrElse(LocalDateTime.now))
           vehicle.spot = None
           s.vehicle = None
-          println("Unpark " + vehicle + " from spot " + s.spotId + " with fee " + vehicle.getFee)
+          println("Unpark " + vehicle + " from spot " + s.id + " with fee " + vehicle.getFee)
+          feesReceived = feesReceived + vehicle.getFee
           true
         case None => false
       }
@@ -48,13 +51,13 @@ class Garage(carGarageSpots: Array[GarageSpot[Car]], truckGarageSpots: Array[Gar
     vehicle match {
       case c: Car => c.spot match {
         case Some(carSpot) =>
-          val spot: Option[GarageSpot[Car]] = carGarageSpots.find(s => s.spotId == carSpot)
+          val spot: Option[GarageSpot[Car]] = carGarageSpots.find(s => s.id == carSpot)
           unparkHelper(c, spot)
         case None => false
       }
       case t: Truck => t.spot match {
         case Some(truckSpot) =>
-          val spot: Option[GarageSpot[Truck]] = truckGarageSpots.find(s => s.spotId == truckSpot)
+          val spot: Option[GarageSpot[Truck]] = truckGarageSpots.find(s => s.id == truckSpot)
           unparkHelper(t, spot)
         case None => false
       }
@@ -100,4 +103,6 @@ object GarageSuite extends App {
   myGarage.unpark(car2, Some(twoHrsLater))
 
   myGarage.park(car4, Some(twoHrsLater))
+
+  println("Total income for garage: " + myGarage.feesReceived)
 }
