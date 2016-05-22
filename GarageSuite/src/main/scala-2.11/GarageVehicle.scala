@@ -8,7 +8,7 @@ import GarageSpot.SpotId
   */
 object GarageVehicle {
 
-  object Trunk {
+  object Truck {
     val hourlyRate: Double = 20
   }
 
@@ -23,26 +23,22 @@ sealed trait GarageVehicle {
   var enterDateTime: Option[LocalDateTime] = None
   var leaveDateTime: Option[LocalDateTime] = None
 
-  def getHourlyRate: Double
-
   def getFee: Double = (enterDateTime, leaveDateTime) match {
     case (Some(e), Some(l)) => ChronoUnit.MINUTES.between(e, l) * getHourlyRate / 60.0
     case _ => 0.0
   }
 
-  val getLicenseNo: String
+  def getHourlyRate: Double = this match {
+    case t: Truck => GarageVehicle.Truck.hourlyRate
+    case c: Car => GarageVehicle.Car.hourlyRate
+  }
+
+  override val toString: String = this match {
+    case Truck(license) => "Truck (" + license + ")"
+    case Car(license) => "Car (" + license + ")"
+  }
 }
 
-case class Truck(licenseNo: String) extends GarageVehicle {
-  def getHourlyRate: Double = GarageVehicle.Trunk.hourlyRate
+case class Truck(licenseNo: String) extends GarageVehicle
 
-  val getLicenseNo: String = licenseNo
-  override val toString = "Truck (" + getLicenseNo + ")"
-}
-
-case class Car(licenseNo: String) extends GarageVehicle {
-  def getHourlyRate: Double = GarageVehicle.Car.hourlyRate
-
-  val getLicenseNo: String = licenseNo
-  override val toString = "Car (" + getLicenseNo + ")"
-}
+case class Car(licenseNo: String) extends GarageVehicle
