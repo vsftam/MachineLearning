@@ -34,8 +34,8 @@ sealed trait GarageVehicle {
   }
 
   override val toString: String = this match {
-    case Truck(license) => "Truck (" + license + ")"
-    case Car(license) => "Car (" + license + ")"
+    case Truck(licenseNo) => "Truck (" + licenseNo + ")"
+    case Car(licenseNo) => "Car (" + licenseNo + ")"
   }
 }
 
