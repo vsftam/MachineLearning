@@ -56,6 +56,7 @@ class CalculatorSuite extends FunSuite with ShouldMatchers {
     map = map + ("a" -> Signal(Literal(5.0)))
     map = map + ("b" -> Signal(Plus(Ref("a"), Literal(1.0))))
     map = map + ("x" -> Signal(Times(Ref("x"), Literal(2.0))))
+    map = map + ("y" -> Signal(Times(Ref("b"), Literal(2.0))))
 
     assert( Calculator.eval(Literal(3.0), map) === 3.0)
     assert( Calculator.eval(Ref("a"), map) === 5.0)
@@ -63,5 +64,6 @@ class CalculatorSuite extends FunSuite with ShouldMatchers {
     assert( Calculator.eval(Plus(Ref("a"), Ref("b")), map) === 11.0)
 
     assert( Calculator.eval(Ref("x"), map) equals Double.NaN)
+    assert( Calculator.eval(Ref("y"), map) === 12.0)
   }
 }
