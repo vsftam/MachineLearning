@@ -14,7 +14,7 @@ object PowerSet {
       } )
     }
 
-  def main(arg: Array[String]) {
+  def main(arg: Array[String]) = {
     println( powerSet(Set("A", "B", "C")))
   }
 
