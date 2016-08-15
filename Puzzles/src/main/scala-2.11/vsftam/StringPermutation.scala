@@ -19,6 +19,7 @@ object StringPermutation {
   }
 
   def main(args: Array[String]) = {
+    println(getStringPermutations(List("NOW")))
     println(getStringPermutations(List("GO", "WEST")))
   }
 }
