@@ -7,8 +7,11 @@ Homework solutions from Scala related courses (FuncionalProgramDesign, ParallelP
 ## GarageSuite
 Scala implementation of a interview design question of a commercial garage
 
-## Machine Learning
+## MachineLearning
 Scala translation of matlab code used in Coursea Machine Learning course by Andrew Ng
 
-## Storm Project
+## Puzzles
+Interview puzzles with Scala solutions
+
+## StormProject
 Experimental projects with Apache Storm
