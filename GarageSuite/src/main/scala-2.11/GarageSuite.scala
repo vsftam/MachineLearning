@@ -104,5 +104,5 @@ object GarageSuite extends App {
 
   myGarage.park(car4, Some(twoHrsLater))
 
-  println("Total income for garage: " + myGarage.feesReceived)
+  println("Total revenue for garage: " + myGarage.feesReceived)
 }
