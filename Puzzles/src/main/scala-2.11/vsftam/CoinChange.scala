@@ -7,7 +7,7 @@ object CoinChange {
 
   val denominations = List(25, 10, 5, 1)
 
-  private def coinChange(amount: Int, denominations: List[Int]) : Int = {
+  def coinChange(amount: Int, denominations: List[Int]) : Int = {
     if(amount == 0 && denominations.length >= 0) 1
     else if(amount < 0 || denominations.isEmpty) 0
     else
