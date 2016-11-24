@@ -5,6 +5,7 @@ version := "1.0"
 scalaVersion := "2.11.8"
 
 mainClass in (Compile, run) := Some("com.vsftam.stockanalyser.DataPersister")
+// mainClass in (Compile, run) := Some("com.vsftam.stockanalyser.LocalTopologyRunner")
 
 libraryDependencies  ++= Seq(
   // other dependencies here
