@@ -15,3 +15,6 @@ Interview puzzles with Scala solutions
 
 ## StormProject
 Experimental projects with Apache Storm
+
+## DataAnalyser
+Reading and analysing stock data from yahoo finance website
