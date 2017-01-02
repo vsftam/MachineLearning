@@ -3,12 +3,13 @@ lazy val root = (project in file(".")).aggregate(Puzzles, StormProject, GarageSu
 
 lazy val commonSettings = Seq(
   version := "1.0",
-  scalaVersion := "2.12.1"
+  scalaVersion := "2.11.8"
 )
 
 lazy val Puzzles = (project).settings(commonSettings: _*)
 
-lazy val StormProject = (project).settings(commonSettings: _*)
+# lazy val StormProject = (project).settings(commonSettings: _*)
+lazy val StormProject = project
 
 // lazy val MachineLearning = (project).settings(commonSettings: _*)
 lazy val MachineLearning = project
