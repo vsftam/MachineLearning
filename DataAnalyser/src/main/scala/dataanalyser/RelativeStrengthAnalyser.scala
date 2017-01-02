@@ -33,7 +33,7 @@ object RelativeStrengthAnalyser extends App {
           nextOption(map ++ Map("returnPeriod" -> value), tail)
         case "-relativeStrengthPeriod" :: value :: tail => 
           nextOption(map ++ Map("relativeStrengthPeriod" -> value), tail)
-        case option :: tail => println("Unknown option "+ option); println(usageStr); exit(1)
+        case option :: tail => println("Unknown option "+ option); println(usageStr); map
       }
     }
     
