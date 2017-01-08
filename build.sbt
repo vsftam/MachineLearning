@@ -8,7 +8,7 @@ lazy val commonSettings = Seq(
 
 lazy val Puzzles = (project).settings(commonSettings: _*)
 
-# lazy val StormProject = (project).settings(commonSettings: _*)
+// lazy val StormProject = (project).settings(commonSettings: _*)
 lazy val StormProject = project
 
 // lazy val MachineLearning = (project).settings(commonSettings: _*)
