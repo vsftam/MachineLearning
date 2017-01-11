@@ -6,7 +6,8 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.11.8"
 )
 
-lazy val Puzzles = (project).settings(commonSettings: _*)
+// lazy val Puzzles = (project).settings(commonSettings: _*)
+lazy val Puzzles = project
 
 // lazy val StormProject = (project).settings(commonSettings: _*)
 lazy val StormProject = project
@@ -14,6 +15,8 @@ lazy val StormProject = project
 // lazy val MachineLearning = (project).settings(commonSettings: _*)
 lazy val MachineLearning = project
 
-lazy val GarageSuite = (project).settings(commonSettings: _*)
+// lazy val GarageSuite = (project).settings(commonSettings: _*)
+lazy val GarageSuite = project
 
-lazy val DataAnalyser = (project).settings(commonSettings: _*)
+// lazy val DataAnalyser = (project).settings(commonSettings: _*)
+lazy val DataAnalyser = project
