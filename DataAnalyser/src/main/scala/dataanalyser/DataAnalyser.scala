@@ -3,7 +3,7 @@ package dataanalyser
 import dataanalyser.YahooFinanceDataSource._
 import dataanalyser.Stat._
 
-object Main extends App {
+object DataAnalyser extends App {
 
   println("running main")
    
