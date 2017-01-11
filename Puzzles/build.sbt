@@ -2,7 +2,7 @@ name := "Puzzles"
 
 version := "1.0"
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.11.8"
 
 mainClass in (Compile, run) := Some("vsftam.NQueens")
 
