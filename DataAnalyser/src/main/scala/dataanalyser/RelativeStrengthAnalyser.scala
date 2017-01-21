@@ -1,56 +1,26 @@
 package dataanalyser
 
+import java.nio.file.{Files, Paths}
+
+import dataanalyser.Stat._
+import org.log4s._
+import org.rogach.scallop._
+
 import scala.io.Source
-import Stat._
 
 object RelativeStrengthAnalyser extends App {
 
   override def main(args: Array[String]) {
-    val usageStr = "Usage: RelativeStrengthAnalyser -start yyyymmdd -end yyyymmdd -inputFile <location> [-returnPeriod returnPeriod] [-relativeStrengthPeriod rsPeriod]"
-      
-    if (args.length != 6) {
-      println("Not sufficent argments ")
-      println(usageStr)
-      sys.exit(1)
-    }
 
-    /* todo:
-     * duplcate code
-     */
-    val arglist = args.toList
-    type OptionMap = Map[String, String]
-    
-    def nextOption(map: OptionMap, list: List[String]) : OptionMap = {
-      list match {
-        case Nil => map
-        case "-start" :: value :: tail => 
-          nextOption(map ++ Map("start" -> value), tail)
-        case "-end" :: value :: tail => 
-          nextOption(map ++ Map("end"-> value), tail)
-        case "-inputFile" :: value :: tail => 
-          nextOption(map ++ Map("inputFile" -> value), tail)
-        case "-returnPeriod" :: value :: tail =>
-          nextOption(map ++ Map("returnPeriod" -> value), tail)
-        case "-relativeStrengthPeriod" :: value :: tail => 
-          nextOption(map ++ Map("relativeStrengthPeriod" -> value), tail)
-        case option :: tail => println("Unknown option "+ option); println(usageStr); map
-      }
-    }
-    
-    val options = nextOption(Map(), arglist)
-    println(options)
-    
-    if( options.get("start").isEmpty || options.get("end").isEmpty || options.get("inputFile").isEmpty ) {
-      println("Missing option")
-      println(usageStr)
-      sys.exit(1)
-    }
-      
-    val startDate = options.get("start").map(_.toInt).getOrElse(throw new IllegalArgumentException)
-    val endDate = options.get("end").map(_.toInt).getOrElse(throw new IllegalArgumentException)
-    val filename = options.get("inputFile").get
-    val returnPeriod = options.get("returnPeriod").map(_.toInt).getOrElse(20)
-    val relativeStrengthPeriod = options.get("relativeStrengthPeriod").map(_.toInt).getOrElse(20)
+    val logger = getLogger
+
+    val conf = new Conf(args)
+
+    val startDate = conf.start()
+    val endDate = conf.end()
+    val filename = conf.inputfile()
+    val returnPeriod = conf.reteriod()
+    val relativeStrengthPeriod = conf.rsperiod()
 
     /* todo:
      * abstract the main process
@@ -58,34 +28,34 @@ object RelativeStrengthAnalyser extends App {
     var returnsMap = Map[ String, List[Double] ]()
     val tickerList = Source.fromFile(filename).getLines().toList
     // first line is benchmark
-    val benchmarkTicker = tickerList(0).split(',')(0)
+    val benchmarkTicker = tickerList.head.split(',')(0)
     var dateIndex = Array[String]()
     
     for( line <- tickerList ) {
       val tokens = line.split(',')   
       val ticker = fixTicker(tokens(1))
       val data = getTickerData(ticker, startDate, endDate, returnPeriod)
-      if(dateIndex.size == 0) {
+      if (dateIndex.length == 0) {
         dateIndex = (data map ( d => d.asOfDate )).toArray
       }
       val rets = nDayReturn( data.map( d => d.adjClose) , returnPeriod ) 
       returnsMap += tokens(0) -> rets
-      println( tokens(0) + " (" + tokens(1) + ") :" + rets)
-    }   
-    
-    // println("benchmark is "+ benchmarkTicker)
-    // println("map is "+ returnsMap)
+      logger.info(tokens(0) + " (" + tokens(1) + ") :" + rets)
+    }
+
+    // logger.info("benchmark is "+ benchmarkTicker)
+    // logger.info("map is "+ returnsMap)
     var rsiMap = Map[String, List[Double] ]()
-    val benchmarkReturn = returnsMap.get(benchmarkTicker).get
+    val benchmarkReturn = returnsMap(benchmarkTicker)
     
     var rsiConsecutivePositiveReturns = Map[String, List[(String,String)]]()
     
     for( ticker <- returnsMap.keys.filter(t => t != benchmarkTicker)) {
-      val rs = sequenceDiff( benchmarkReturn, returnsMap.get(ticker).get )
+      val rs = sequenceDiff(benchmarkReturn, returnsMap(ticker))
       rsiMap += ticker + " vs. " + benchmarkTicker -> rs
 
       val positivePeriodIndices = getConsecutivePositiveReturnIndices(rs, relativeStrengthPeriod)
-      if( positivePeriodIndices.size > 0) {
+      if (positivePeriodIndices.nonEmpty) {
       	rsiConsecutivePositiveReturns += ticker -> ( positivePeriodIndices map ( (i) => ( dateIndex(i._2), dateIndex(i._1) ) ) ) 	    
       }
     }
@@ -93,7 +63,7 @@ object RelativeStrengthAnalyser extends App {
     val seqSizes = rsiMap.values map ( s => s.size )
     
     // header
-    println( "sequence," + dateIndex.reverse.drop(returnPeriod - 1).mkString(",") )
+    logger.info("sequence," + dateIndex.reverse.drop(returnPeriod - 1).mkString(","))
     // fit all seq to the max len, and make it chronological
     for( (seqName, seq) <- rsiMap ) {
        var newSeq = seq.reverse
@@ -101,13 +71,13 @@ object RelativeStrengthAnalyser extends App {
          newSeq = 0.0 :: newSeq
        }
        val rsString = newSeq map ( d => "%.15f" format d ) mkString ","
-       println(  seqName + "," + rsString )
+      logger.info(seqName + "," + rsString)
     }
     
     // finally print sequence with N consecutive positive returns
-    println( rsiConsecutivePositiveReturns )
+    logger.info(rsiConsecutivePositiveReturns.toString)
   }
-  
+
   def fixTicker(ticker : String) : String = {
     ticker.replace("^", "%5E")
   }
@@ -115,6 +85,32 @@ object RelativeStrengthAnalyser extends App {
   def getTickerData(ticker: String, startDate: Int, endDate: Int, period: Int) : List[YahooFinanceDataRow] = {
       val uri = YahooFinanceDataSource.getURI(ticker, startDate, endDate)
       val dataSource = new YahooFinanceDataSource()
-      dataSource.retrieveData(uri) 
-  } 
+    dataSource.retrieveData(uri)
+  }
+
+  class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
+
+    banner(
+      """
+        |Usage: RelativeStrengthAnalyser [OPTION]
+        |Options:
+      """.stripMargin)
+
+    val start = opt[Int](required = true, descr = "Start Date", validate = i => i > 19000101 && i < 99991230)
+    val end = opt[Int](required = true, descr = "End Date", validate = i => i > 19000101 && i < 99991230)
+    val inputfile = opt[String](required = true, descr = "Input File", validate = f => Files.exists(Paths.get(f)))
+    val reteriod = opt[Int](descr = "Return Period", default = Some(20))
+    val rsperiod = opt[Int](descr = "Relative Strength Period", default = Some(20))
+
+    validate(start, end) { (s, e) =>
+      if (e > s) Right(Unit)
+      else Left("end date must be greater than start date")
+    }
+    verify
+
+    override def onError(e: Throwable): Unit = {
+      this.printHelp()
+      super.onError(e)
+    }
+  }
 }
