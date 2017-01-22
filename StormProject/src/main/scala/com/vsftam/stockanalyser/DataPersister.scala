@@ -17,8 +17,8 @@ object DataPersister {
 
   val JDBC_DRIVER = "org.mariadb.jdbc.Driver";
   val DB_URL = "jdbc:mariadb://192.168.1.4:3306/test";
-  val USER = "vincent"
-  val PASSWORD = ""
+  val USER = "vincenttam"
+  val PASSWORD = "vincenttam"
 
   def init = {
     ConnectionPool.singleton(DataPersister.DB_URL, DataPersister.USER, DataPersister.PASSWORD)
