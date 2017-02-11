@@ -17,6 +17,8 @@ object DataAnalyser extends App {
 
     logger.info("total data points: " + data.size)
 
+    DataPersister.insertStockData(data)
+
     val K = 2
     val N = 20
 
@@ -25,6 +27,7 @@ object DataAnalyser extends App {
     msg.foreach(m => logger.info(m))
  }
 
+ 
   class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
     banner(
       """
@@ -45,5 +48,4 @@ object DataAnalyser extends App {
       super.onError(e)
     }
   }
-  
 }
