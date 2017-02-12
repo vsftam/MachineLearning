@@ -1,16 +1,21 @@
 package dataanalyser
 
-import java.net.URI;
-import dataanalyser.YahooFinanceDataSource._
+import java.net.URI
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 
 case class YahooFinanceDataRow(
-  	asOfDate : String,
+  	asOfDateStr : String,
   	open: Double,
   	high: Double,
   	low: Double,
   	close: Double,
-  	volume: Long,
-  	adjClose: Double)
+  	volume: Int,
+  	adjClose: Double) {
+  private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+  def asOfDate = LocalDate.parse(asOfDateStr, formatter)
+}
 
 class YahooFinanceDataSource extends InternetDataSource[YahooFinanceDataRow] {
   
@@ -23,7 +28,7 @@ class YahooFinanceDataSource extends InternetDataSource[YahooFinanceDataRow] {
     else {
       val dataRow = new YahooFinanceDataRow(
           tokens(0), tokens(1).toFloat, tokens(2).toFloat, tokens(3).toFloat, 
-          tokens(4).toFloat, tokens(5).toLong, tokens(6).toFloat
+          tokens(4).toFloat, tokens(5).toInt, tokens(6).toFloat
           )
       Some(dataRow)
     }

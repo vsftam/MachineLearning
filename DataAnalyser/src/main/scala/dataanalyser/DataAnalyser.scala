@@ -17,7 +17,7 @@ object DataAnalyser extends App {
 
     logger.info("total data points: " + data.size)
 
-    DataPersister.insertStockData(data)
+    DataPersister.insertStockData(conf.ticker(), data)
 
     val K = 2
     val N = 20

@@ -36,7 +36,7 @@ object RelativeStrengthAnalyser extends App {
       val ticker = fixTicker(tokens(1))
       val data = getTickerData(ticker, startDate, endDate, returnPeriod)
       if (dateIndex.length == 0) {
-        dateIndex = (data map ( d => d.asOfDate )).toArray
+        dateIndex = (data map ( d => d.asOfDateStr )).toArray
       }
       val rets = nDayReturn( data.map( d => d.adjClose) , returnPeriod ) 
       returnsMap += tokens(0) -> rets
