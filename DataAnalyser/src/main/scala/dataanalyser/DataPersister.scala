@@ -26,6 +26,7 @@ object DataPersister {
     def volume = column[Int]("VOLUME")
     def adjClose = column[Double]("ADJ_CLOSE")
     def lastUpdatedTs = column[Timestamp]("LAST_UPDATED_TS")
+    def pk = primaryKey("pk_1", (asOfDate, ticker))
     def * = (asOfDate, ticker, open, high, low, close, volume, adjClose, lastUpdatedTs) <> (Stock.tupled, Stock.unapply _)
   }
 
