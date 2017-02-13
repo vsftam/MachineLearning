@@ -51,8 +51,8 @@ object DataPersister {
   }
 
   def insertStockData(ticker: String, data: List[YahooFinanceDataRow]) : Boolean = {
-    // val db = Database.forConfig("mydb")
-    val db = getDb
+    val db = Database.forConfig("mydb")
+    // val db = getDb
     logger.info("Driver loaded for mydb")
 
     if (testDb(db))  {
