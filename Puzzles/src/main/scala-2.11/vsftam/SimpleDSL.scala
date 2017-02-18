@@ -35,17 +35,13 @@ object SimpleDSL {
     worker: Option[Worker],
     supervisor: Option[Supervisor]
   ) {
-    def submit(implicit proof: FSA[T,W,S]) = {
-      println(s"$tasks taken by ${worker.get}, by ${supervisor.get}")
-    }
+    def submit(implicit proof: FSA[T,W,S]) = println(s"$tasks taken by ${worker.get}, by ${supervisor.get}")
   }
 
   object FSA {
     implicit val endStateS3 = new S3()
     implicit val endStateS5 = new S5()
   }
-
-  def lets = new S1(List.empty[Task], None, None)
 
   /**
     * States
@@ -63,6 +59,8 @@ object SimpleDSL {
   /**
     * Transitions
     */
+  def lets = new S1(List.empty[Task], None, None)
+
   implicit class AfterLets(s1: S1) {
     def delegate(task: Task) : S2 = new S2(task :: s1.t, s1.w, s1.s)
   }
