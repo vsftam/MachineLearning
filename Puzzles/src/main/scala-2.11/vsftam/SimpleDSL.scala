@@ -13,6 +13,9 @@ import scala.annotation.implicitNotFound
   */
 object SimpleDSL {
 
+  /**
+    * Types
+    */
   case class Task(name: String)
   case class Worker(name: String)
   case class Supervisor(name: String)
@@ -44,40 +47,43 @@ object SimpleDSL {
 
   def lets = new S1(List.empty[Task], None, None)
 
-  class S1 (t : List[Task], w: Option[Worker], s: Option[Supervisor])
-    extends FSA[No,No,No] (t, w, s) {
-    def delegate(task: Task) : S2 = {
-      val t2 = task :: t
-      new S2(t2, w, s)
-    }
-  }
-
-  class S2 (t : List[Task], w: Option[Worker], s: Option[Supervisor])
-    extends FSA[Yes,No,No] (t, w, s) {
-    def and(task: Task) : S2 = {
-      val t2 = task :: t
-      new S2(t2, w, s)
-    }
-    def to(worker: Worker): S3 = new S3(t, Some(worker), s)
-    def supervisedBy(supervisor: Supervisor): S4 = new S4(t, w, Some(supervisor))
-  }
-
-  class S3 (t : List[Task], w: Option[Worker], s: Option[Supervisor])
-    extends FSA[Yes,Yes,No] (t, w, s) {
+  /**
+    * States
+    */
+  case class S1 (t : List[Task], w: Option[Worker], s: Option[Supervisor]) extends FSA[No,No,No] (t, w, s)
+  case class S2 (t : List[Task], w: Option[Worker], s: Option[Supervisor]) extends FSA[Yes,No,No] (t, w, s)
+  case class S3 (t : List[Task], w: Option[Worker], s: Option[Supervisor]) extends FSA[Yes,Yes,No] (t, w, s) {
     def this() = this(List.empty[Task], None, None)
-    def supervisedBy(supervisor: Supervisor): S5 = new S5(t, w, Some(supervisor))
   }
-  class S4 (t : List[Task], w: Option[Worker], s: Option[Supervisor])
-    extends FSA[Yes,No,Yes] (t, w, s) {
-    def to(worker: Worker): S5 = new S5(t, Some(worker), s)
-  }
-
-  class S5 (t : List[Task], w: Option[Worker], s: Option[Supervisor])
-    extends FSA[Yes,Yes,Yes] (t, w, s) {
+  case class S4 (t : List[Task], w: Option[Worker], s: Option[Supervisor]) extends FSA[Yes,No,Yes] (t, w, s)
+  class S5 (t : List[Task], w: Option[Worker], s: Option[Supervisor]) extends FSA[Yes,Yes,Yes] (t, w, s) {
     def this() = this(List.empty[Task], None, None)
   }
 
+  /**
+    * Transitions
+    */
+  implicit class AfterLets(s1: S1) {
+    def delegate(task: Task) : S2 = new S2(task :: s1.t, s1.w, s1.s)
+  }
 
+  implicit class AfterDelegate(s2: S2) {
+    def and(task: Task) : S2 = new S2(task :: s2.t, s2.w, s2.s)
+    def to(worker: Worker): S3 = new S3(s2.t, Some(worker), s2.s)
+    def supervisedBy(supervisor: Supervisor): S4 = new S4(s2.t, s2.w, Some(supervisor))
+  }
+
+  implicit class AfterDelegateTo(s3: S3) {
+    def supervisedBy(supervisor: Supervisor): S5 = new S5(s3.t, s3.w, Some(supervisor))
+  }
+
+  implicit class AfterSupervisedBy(s4: S4) {
+    def to(worker: Worker): S5 = new S5(s4.t, Some(worker), s4.s)
+  }
+
+  /**
+    * Test
+    */
   def main(args: Array[String]): Unit = {
     val task1 = new Task("task 1")
     val task2 = new Task("task 2")
