@@ -68,20 +68,31 @@ object FreeMonad {
     case Chain(v, f) => interpret(f(interpret(v)))
   }
 
+  implicit def effect[A](v: ConsoleF[A]) : Effect[ConsoleF, A] = Effect[ConsoleF, A](v)
+
   def main(args: Array[String]): Unit = {
 
     def userNameProgram: ConsoleIO[String] =
       Chain[ConsoleF, Unit, String](
-        Effect[ConsoleF, Unit](WriteLine("What is your name")),
+        WriteLine("What is your name?"),
         _ => Chain[ConsoleF, String, String](
-          Effect[ConsoleF, String](ReadLine()),
+          ReadLine(),
           name => Chain[ConsoleF, Unit, String](
-            Effect[ConsoleF, Unit](WriteLine(s"Hello $name!")),
+            WriteLine(s"Hello $name!"),
             _ => Pure[ConsoleF, String](name)
           )
         )
       )
 
+    /**
+    def userNameProgram2: ConsoleIO[String] = {
+      for {
+        _ <- writeLine("What is your name?")
+        name <- readLine
+        _ <- writeLine(s"Nice to meet you $name!")
+      } yield name
+    }
+    */
     interpret(userNameProgram)
   }
 }
