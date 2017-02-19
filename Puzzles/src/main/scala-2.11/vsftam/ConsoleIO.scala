@@ -87,15 +87,14 @@ object FreeMonad {
         )
       )
 
-    /**
     def userNameProgram2: ConsoleIO[String] = {
       for {
-        _ <- writeLine("What is your name?")
-        name <- readLine
-        _ <- writeLine(s"Nice to meet you $name!")
+        _ <- consoleWriteLine("What is your name?")
+        name <- consoleReadLine()
+      _ <- consoleWriteLine(s"Nice to meet you $name!")
       } yield name
     }
-    */
-    interpret(userNameProgram)
+
+    interpret(userNameProgram2)
   }
 }
