@@ -52,7 +52,9 @@ object FreeMonad {
   final case class Map[F[_], A, B](v: Sequential[F, A], f: A => B) extends Sequential[F, B]
   final case class Chain[F[_], A, B](v: Sequential[F, A], f: A => Sequential[F, B]) extends Sequential[F, B]
 
-  trait ConsoleF[A]
+  trait ConsoleF[A] {
+    def effect: Effect[ConsoleF, A] = Effect(this)
+  }
   final case class ReadLine() extends ConsoleF[String]
   final case class WriteLine(line: String) extends ConsoleF[Unit]
 
@@ -68,17 +70,18 @@ object FreeMonad {
     case Chain(v, f) => interpret(f(interpret(v)))
   }
 
-  implicit def effect[A](v: ConsoleF[A]) : Effect[ConsoleF, A] = Effect[ConsoleF, A](v)
+  def consoleWriteLine(line:String) : Effect[ConsoleF, Unit] = WriteLine(line).effect
+  def consoleReadLine() : Effect[ConsoleF, String] = ReadLine().effect
 
   def main(args: Array[String]): Unit = {
 
     def userNameProgram: ConsoleIO[String] =
       Chain[ConsoleF, Unit, String](
-        WriteLine("What is your name?"),
+        consoleWriteLine("What is your name?"),
         _ => Chain[ConsoleF, String, String](
-          ReadLine(),
+          consoleReadLine(),
           name => Chain[ConsoleF, Unit, String](
-            WriteLine(s"Hello $name!"),
+            consoleWriteLine(s"Hello $name!"),
             _ => Pure[ConsoleF, String](name)
           )
         )
