@@ -1,5 +1,6 @@
 package vsftam
 
+import scala.collection.mutable.ListBuffer
 import scala.math.Ordering.Implicits._
 
 /**
@@ -62,6 +63,36 @@ object SortingAlgorithms {
     }
 
     inner(list, Nil)
+  }
+
+  def selectionSort[A: Ordering](list: List[A]): List[A] = {
+    val buf: ListBuffer[A] = list.to[ListBuffer]
+
+    def inner[A: Ordering](listBuf: ListBuffer[A]): List[A] = {
+      if(listBuf.length == 0) Nil
+      else {
+        val min = listBuf.min
+        min :: inner(listBuf -= min)
+      }
+    }
+
+    inner(buf)
+  }
+
+  def selectionSort2[A: Ordering](list: List[A]): List[A] = list match {
+    case Nil => Nil
+    case _ => {
+      val ml = minList(list)
+      ml.head :: selectionSort2(ml.tail)
+    }
+  }
+
+  private def minList[A:Ordering](alist: List[A]) : List[A] = {
+    (alist.tail).foldLeft(List(alist.head)) (
+      (acc, a) => {
+        if(a < acc.head)  a :: acc
+        else acc.head :: a :: acc.tail
+      } )
   }
 
   def mergeSort[A: Ordering](list: List[A]): List[A] = list match {

@@ -36,4 +36,12 @@ class SortingAlgorithmsSuite extends FunSuite{
   test("InsertionSort") {
     assert(insertionSort(list) === sortedList)
   }
+
+  test("SelectionSort") {
+    assert(selectionSort(list) === sortedList)
+  }
+
+  test("SelectionSort2") {
+    assert(selectionSort2(list) === sortedList)
+  }
 }
