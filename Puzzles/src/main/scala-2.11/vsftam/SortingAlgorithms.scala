@@ -7,6 +7,38 @@ import scala.math.Ordering.Implicits._
   */
 object SortingAlgorithms {
 
+  def bubbleSort[A: Ordering](list: List[A]): List[A] = list match {
+    case a :: b :: as => {
+      if (a > b) bubbleSort(b :: a :: as)
+      else {
+        val sorted = bubbleSort(b :: as)
+        if (a > sorted.head)
+          bubbleSort(sorted.head :: a :: sorted.tail)
+        else
+          a :: sorted
+      }
+    }
+    case _ => list
+  }
+
+  def bubbleSort2[A: Ordering](list: List[A]) : List[A] = {
+
+    def sort[A: Ordering](as: List[A], bs: List[A]) = as match {
+      case Nil => bs
+      case _ => bubble(as, Nil, bs)
+    }
+
+    def bubble[A: Ordering](alist: List[A], zlist: List[A], blist: List[A]) : List[A] = alist match {
+      case h1 :: h2 :: t => {
+        if(h1 > h2) bubble(h1 :: t, h2 :: zlist, blist)
+        else bubble(h2 :: t, h1 :: zlist, blist)
+      }
+      case h1 :: Nil => sort(zlist, h1 :: blist)
+    }
+
+    sort(list, Nil)
+  }
+
   def quickSort[A: Ordering](list: List[A]): List[A] = list match {
     case Nil => Nil
     case a :: as => {
@@ -15,6 +47,9 @@ object SortingAlgorithms {
     }
   }
 
+  def insertionSort[A](list: List[Ordered[A]]): List[Ordered[A]] = {
+    list
+  }
 
   def mergeSort[A: Ordering](list: List[A]): List[A] = list match {
     case Nil => Nil
@@ -42,5 +77,6 @@ object SortingAlgorithms {
 
     println("Quick sort: " + quickSort(list1))
     println("Merge sort: " + mergeSort(list1))
+    println("Bubble sort2" + bubbleSort2(list1))
   }
 }

@@ -7,7 +7,6 @@ import vsftam.SortingAlgorithms._
 class SortingAlgorithmsSuite extends FunSuite{
 
   val list = List(4, 6, 3, 1, 5, 2)
-
   val sortedList = List(1, 2, 3, 4, 5, 6)
 
   test("QuickSort") {
@@ -16,5 +15,21 @@ class SortingAlgorithmsSuite extends FunSuite{
 
   test("MergeSort") {
     assert(mergeSort(list) === sortedList)
+  }
+
+  test("BubbleSort") {
+    assert(bubbleSort(list) === sortedList)
+  }
+
+  test("BubbleSort2") {
+    assert(bubbleSort2(list) === sortedList)
+  }
+
+  test("BubbleSort2 - Nil") {
+    assert(bubbleSort2(Nil) === Nil)
+  }
+
+  test("BubbleSort2 - 1 item") {
+    assert(bubbleSort2(List(1)) === List(1))
   }
 }
