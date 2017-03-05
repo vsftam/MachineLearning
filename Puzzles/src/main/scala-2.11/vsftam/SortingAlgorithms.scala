@@ -28,6 +28,7 @@ object SortingAlgorithms {
       case _ => bubble(as, Nil, bs)
     }
 
+    // bubble the largest value to the end of the list (blist)
     def bubble[A: Ordering](alist: List[A], zlist: List[A], blist: List[A]) : List[A] = alist match {
       case h1 :: h2 :: t => {
         if(h1 > h2) bubble(h1 :: t, h2 :: zlist, blist)
@@ -47,8 +48,20 @@ object SortingAlgorithms {
     }
   }
 
-  def insertionSort[A](list: List[Ordered[A]]): List[Ordered[A]] = {
-    list
+  def insertionSort[A: Ordering](list: List[A]): List[A] = {
+
+    def inner[A: Ordering](alist: List[A], blist: List[A]) : List[A] = alist match {
+      case Nil => blist
+      case a :: as => inner(as, insert(blist, a))
+    }
+
+    def insert[A: Ordering](l: List[A], x: A) : List[A] = l match {
+      case Nil => List(x)
+      case a :: as if x < a => x :: a :: as
+      case a :: as => a :: insert(as, x)
+    }
+
+    inner(list, Nil)
   }
 
   def mergeSort[A: Ordering](list: List[A]): List[A] = list match {

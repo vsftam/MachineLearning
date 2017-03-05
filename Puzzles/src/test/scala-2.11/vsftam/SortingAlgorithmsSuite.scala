@@ -32,4 +32,8 @@ class SortingAlgorithmsSuite extends FunSuite{
   test("BubbleSort2 - 1 item") {
     assert(bubbleSort2(List(1)) === List(1))
   }
+
+  test("InsertionSort") {
+    assert(insertionSort(list) === sortedList)
+  }
 }
