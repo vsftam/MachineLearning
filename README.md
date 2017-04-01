@@ -1,8 +1,8 @@
 # ScalaProjects
-Various small-scale Scala projects
+Small Scala projects
 
 ## Coursera
-Homework solutions from Scala related courses (FuncionalProgramDesign, ParallelProgramming)
+Homework solutions from Scala related courses (FuncionalProgramDesign, ParallelProgramming, BigDataAnalysisWithScalaAndSpark)
 
 ## GarageSuite
 Scala implementation of a interview design question of a commercial garage
